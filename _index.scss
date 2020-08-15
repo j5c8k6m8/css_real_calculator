@@ -1,0 +1,950 @@
+$DIGIT: 8;
+$NUM: 5;
+$MAX_DIGIT_NUM: 1;
+@for $d from 1 through $DIGIT {
+  $MAX_DIGIT_NUM: $MAX_DIGIT_NUM * 10;
+}
+// counter-reset
+$c-list: ();
+@for $n from 1 through $NUM {
+  $c-list: append($c-list, cn#{$n});
+}
+@for $z from 0 through $DIGIT {
+  $c-list: append($c-list, cz#{$z});
+}
+body{
+  counter-reset:$c-list
+}
+
+// counter-increment(各数値用)
+@for $n from 1 through $NUM {
+  .n#{$n}x:checked + .gn#{$n} > .sn#{$n} {
+    counter-increment: cn#{$n} 1;
+  }
+  @for $d1 from 1 through $DIGIT - 1 {
+    $inc: 10;
+    @for $d2 from $d1 + 1 through $DIGIT {
+      .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sn#{$n}d#{$d1} {
+        counter-increment: cn#{$n} $inc;
+      }
+      $inc: $inc * 10;
+    }
+  }
+}
+
+// counter-increment(合計用)
+$z_pow: 1;
+@for $z from 0 through $DIGIT {
+  @for $n from 1 through $NUM {
+    $n-1: $n - 1;
+    // 小数点入力なし
+    .n#{$n}h:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n} {
+      counter-increment: cz#{$z} $z_pow;
+    }
+    @if $n > 1 {
+      .n#{$n-1}m:checked ~ .n#{$n}h:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n} {
+        counter-increment: cz#{$z} #{ - $z_pow};
+      }
+    }
+    @for $d1 from 1 through $DIGIT - 1 {
+      $pow: $z_pow * 10;
+      @for $d2 from $d1 + 1 through $DIGIT {
+        @if $pow >= $MAX_DIGIT_NUM {
+          .n#{$n}h:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked ~ .kvz#{$z} {
+            display: none !important;
+          }
+        } @else {
+          .n#{$n}h:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1} {
+            counter-increment: cz#{$z} $pow;
+          }
+          @if $n > 1 {
+            .n#{$n-1}m:checked ~ .n#{$n}h:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1} {
+              counter-increment: cz#{$z} #{ - $pow};
+            }
+          }
+        }
+        $pow: $pow * 10;
+      }
+    }
+    // 小数点入力あり
+    $add_selector: "";
+    $dot_pow: $z_pow;
+    @for $i from 1 through $DIGIT + 1 {
+      @if $dot_pow >= 1 {
+        .n#{$n}r:checked #{$add_selector} + .n#{$n}p:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n},
+        .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n},
+        .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m + .n#{$n}e:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n} {
+          counter-increment: cz#{$z} $dot_pow;
+        }
+        @if $n > 1 {
+          .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n},
+          .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n},
+          .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m + .n#{$n}e:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n} {
+            counter-increment: cz#{$z} #{ - $dot_pow};
+          }
+        }
+      } @else if $dot_pow == 0.1 {
+        .n#{$n}r:checked #{$add_selector} + .n#{$n}p:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n}y,
+        .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n}y,
+        .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m + .n#{$n}e:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n}y {
+          counter-increment: cz#{$z} 1;
+        }
+        @if $n > 1 {
+          .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n}y,
+          .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n}y,
+          .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m + .n#{$n}e:checked ~ .n#{$n}x:checked + .gn#{$n} > .sz#{$z}n#{$n}y {
+            counter-increment: cz#{$z} -1;
+          }
+        }
+      }
+      @for $d1 from 1 through $DIGIT - 1 {
+        $dot_d_pow: $dot_pow * 10;
+        @for $d2 from $d1 + 1 through $DIGIT {
+          @if $dot_d_pow >= $MAX_DIGIT_NUM {
+            .n#{$n}r:checked #{$add_selector} + .n#{$n}p:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked ~ .kvz#{$z},
+            .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked  ~ .kvz#{$z},
+            .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m + .n#{$n}e:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked  ~ .kvz#{$z} {
+              display: none !important;
+            }
+          } @else if $dot_d_pow >= 1 {
+            .n#{$n}r:checked #{$add_selector} + .n#{$n}p:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1},
+            .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1},
+            .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m + .n#{$n}e:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1} {
+              counter-increment: cz#{$z} $dot_d_pow;
+            }
+            @if $n > 1 {
+              .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1},
+              .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1},
+              .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m + .n#{$n}e:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1} {
+                counter-increment: cz#{$z} #{ - $dot_d_pow};
+              }
+            }
+          } @else if $dot_d_pow == 0.1 {
+            .n#{$n}r:checked #{$add_selector} + .n#{$n}p:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1}y,
+            .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1}y,
+            .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m + .n#{$n}e:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1}y {
+              counter-increment: cz#{$z} 1;
+            }
+            @if $n > 1 {
+              .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1}y,
+              .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1}y,
+              .n#{$n-1}m:checked ~ .n#{$n}r:checked #{$add_selector} + .n#{$n}p + .n#{$n}m + .n#{$n}e:checked ~ .n#{$n}d#{$d2}x:checked ~ .n#{$n}d#{$d1}x:checked + .gn#{$n}d#{$d1} > .sz#{$z}n#{$n}d#{$d1}y {
+                counter-increment: cz#{$z} -1;
+              }
+            }
+          }
+          $dot_d_pow: $dot_d_pow * 10;
+        }
+      }
+      $add_selector: "#{$add_selector} + .n#{$n}p + .n#{$n}m + .n#{$n}e + .n#{$n}r";
+      // $add_selector: "#{$add_selector} + * + * + * + *";
+      $dot_pow: $dot_pow / 10;
+    }
+  }
+  $z_pow: $z_pow * 10;
+}
+
+// counter表示
+@for $n from 1 through $NUM {
+  .vn#{$n}::before {
+    content: counter(cn#{$n});
+  }
+}
+@for $z from 0 through $DIGIT {
+  .vz#{$z}::before {
+    content: counter(cz#{$z});
+  }
+}
+
+// label表示制御
+label {
+  display: none;
+}
+.lc {
+  display: block !important;  
+}
+@for $n from 1 through $NUM {
+  $n-1: $n - 1;
+  @for $d from 1 through $DIGIT + 1{
+    $d-1: $d - 1;
+    @if $n == 1 {
+      @if $d == 1 {
+        .ln#{$n}d#{$d}b {
+          display: inline;
+        }
+        #n#{$n}d#{$d}r:checked ~ .ln#{$n}d#{$d}a {
+          display: inline;
+        }
+        #n#{$n}d#{$d}r:checked ~ .n#{$n}d#{$d}x:checked ~ .ln#{$n}d#{$d}a {
+          display: none;
+        }
+        #n#{$n}d#{$d}r:checked ~ .n#{$n}o:checked ~ .ln#{$n}d#{$d}a {
+          display: none;
+        }
+      } @else {
+        .n#{$n}d#{$d-1}x:checked ~ .ln#{$n}d#{$d}b {
+          display: inline;
+        }
+      }
+      .n#{$n}d#{$d}x:checked ~ .ln#{$n}d#{$d}b {
+        display: none;
+      }
+      .n#{$n}o:checked ~ .ln#{$n}d#{$d}b {
+        display: none;
+      }
+    } @else {
+      @if $d == 1 {
+        .n#{$n-1}o:checked ~ .ln#{$n}d#{$d}b {
+          display: inline;
+        }
+        .n#{$n-1}o:checked ~ #n#{$n}d#{$d}r:checked ~ .ln#{$n}d#{$d}a {
+          display: inline;
+        }
+        .n#{$n-1}o:checked ~ #n#{$n}d#{$d}r:checked ~ .n#{$n}d#{$d}x:checked ~ .ln#{$n}d#{$d}a {
+          display: none;
+        }        
+        .n#{$n-1}o:checked ~ #n#{$n}d#{$d}r:checked ~ .n#{$n}o:checked ~ .ln#{$n}d#{$d}a {
+          display: none;
+        }        
+      } @else {
+        .n#{$n-1}o:checked ~ .n#{$n}d#{$d-1}x:checked ~ .ln#{$n}d#{$d}b {
+          display: inline;
+        }
+      }
+      .n#{$n-1}o:checked ~ .n#{$n}d#{$d}x:checked ~ .ln#{$n}d#{$d}b {
+        display: none;
+      }
+      .n#{$n-1}o:checked ~ .n#{$n}o:checked ~ .ln#{$n}d#{$d}b {
+        display: none;
+      }
+    }
+  }
+}
+
+// label表示制御(・)
+@for $n from 1 through $NUM {
+  .n#{$n}r:checked ~ .ln#{$n}r {
+    display: none;
+  }
+}
+
+// display要素表示制御(共通)
+.k {
+  display: none;
+}
+
+// display要素表示制御(各数値用)
+@for $n from 1 through $NUM {
+  .n#{$n}d1x:checked ~ .kvn#{$n},
+  .n#{$n}d1r:checked ~ .kvn#{$n},
+  .n#{$n}d1x:checked ~ .kvn#{$n}z0,
+  .n#{$n}d1r:checked ~ .kvn#{$n}z0 {
+    display: block;
+  }
+  .n#{$n}o:checked ~ .n#{$n}d1x:checked ~ .kvn#{$n},
+  .n#{$n}d1r:checked ~ .n#{$n}o:checked ~ .kvn#{$n},
+  .n#{$n}o:checked ~ .n#{$n}d1x:checked ~ .kvn#{$n}z0,
+  .n#{$n}d1r:checked ~ .n#{$n}o:checked ~ .kvn#{$n}z0 {
+    display: none;
+  }
+  @for $d1 from 1 through $DIGIT {
+    $z: 1;
+    @for $d2 from $d1 through $DIGIT {
+      .n#{$n}d#{$d1}r:checked ~ .n#{$n}d#{$d2}x:checked ~ .kvn#{$n}z#{$z} {
+        display: block;
+      }
+      .n#{$n}d#{$d1}r:checked ~ .n#{$n}o:checked ~ .n#{$n}d#{$d2}x:checked ~ .kvn#{$n}z#{$z} {
+        display: none;
+      }
+      $z: $z + 1;
+    }
+  }
+}
+
+// display要素表示制御(合計用)(kvz)
+.kvz0 {
+  display: block;
+}
+
+$add_selector: "";
+@for $z from 1 through $DIGIT {
+  $add_selector: "#{$add_selector} + .p + .m + .e + .r";
+  //$add_selector: "#{$add_selector} + * + * + * + *";
+  // 桁あふれ時(0.111 + 10)の時に桁が切り捨て(10)にならない考慮
+  @for $z2 from 1 through $z {
+    .r:checked #{$add_selector} + .p:checked ~ .kvz#{$z2},
+    .r:checked #{$add_selector} + .p + .m:checked ~ .kvz#{$z2},
+    .r:checked #{$add_selector} + .p + .m + .e:checked ~  .kvz#{$z2} {
+      display: block;
+    }
+    
+  }
+  
+}
+
+// 表示用要素(エラー/+/-/=)制御(共通)
+.q:checked ~ label,.e:checked ~ label {
+  display: none !important;
+}
+
+.q:checked ~ .lc,.e:checked ~ .lc {
+  display: block !important;
+}
+
+.q1:checked ~ .kq1 {
+  display: block;
+}
+
+.q2:checked ~ .kq2 {
+  display: block;
+}
+
+.e:checked ~ .ke {
+  display: block;
+}
+
+@for $n from 1 through $NUM {
+  @if $n == 1 {
+    .n#{$n}p:checked ~ .kp,
+    .n#{$n}m:checked ~ .km {
+      display: block;
+    }
+  } @else {
+    .n#{$n - 1}o:checked ~ .n#{$n}p:checked ~ .kp,
+    .n#{$n - 1}o:checked ~ .n#{$n}m:checked ~ .km {
+      display: block;
+    }
+  }
+  @if $n != $NUM {
+    .n#{$n}p:checked ~ .n#{$n + 1}o:checked ~ .kp,
+    .n#{$n}m:checked ~ .n#{$n + 1}o:checked ~ .km {
+      display: none;
+    }
+  }
+}
+
+.e:checked ~ .kp, .e:checked ~ .km {
+  display: none !important;
+}
+
+// 表示制御(pointer)
+label {
+  cursor: pointer;
+}
+.nq {
+  cursor: not-allowed;
+}
+
+div,label,input,span {
+  position: absolute;
+}
+
+@function get_f1_width($width, $radius-x) {
+  @return $width - if(nth($radius-x, 2) >= nth($radius-x, 3), nth($radius-x, 2), nth($radius-x, 3)) - if(nth($radius-x, 4) >= nth($radius-x, 1), nth($radius-x, 4), nth($radius-x, 1));
+}
+@function get_f1_height($height, $radius-y) {
+  @return $height - if(nth($radius-y, 1) >= nth($radius-y, 2), nth($radius-y, 1), nth($radius-y, 2)) - if(nth($radius-y, 3) >= nth($radius-y, 4), nth($radius-y, 3), nth($radius-y, 4));
+}
+@function get_f1_border($border, $radius-x, $radius-y) {
+  @return nth($border, 1) + if(nth($radius-y, 1) >= nth($radius-y, 2), nth($radius-y, 1), nth($radius-y, 2)) nth($border, 2) + if(nth($radius-x, 2) >= nth($radius-x, 3), nth($radius-x, 2), nth($radius-x, 3)) nth($border, 3) + if(nth($radius-y, 3) >= nth($radius-y, 4), nth($radius-y, 3), nth($radius-y, 4)) nth($border, 4) + if(nth($radius-x, 4) >= nth($radius-x, 1), nth($radius-x, 4), nth($radius-x, 1));
+}
+  
+$B_WIDTH: 68px;
+$B_HEIGHT: 56px;
+$B_BORDER_RADIUS_X: 20px 18px 22px 24px;
+$B_BORDER_RADIUS_Y: 18px 16px 32px 32px;
+$B_BORDER: 3px 3px 6px 7px;
+$B_X: $B_WIDTH + nth($B_BORDER, 2) + nth($B_BORDER, 4);
+$B_Y: $B_HEIGHT + nth($B_BORDER, 1) + nth($B_BORDER, 3);
+$B_BETWEEN_X: 16px;
+$B_BETWEEN_Y: 16px;
+$B_MARGIN_X: 28px;
+$B_MARGIN_TOP: 50px;
+$B_MARGIN_BOTTOM: 4px;
+$B_TRANSLATE_Z: -180px;
+
+$W_BORDER: 6px 9px 15px 18px;
+$W_WIDTH: $B_X * 4 + $B_BETWEEN_X * 3 + $B_MARGIN_X * 2;
+$W_X: $W_WIDTH + nth($W_BORDER, 2) + nth($W_BORDER, 4);
+$W_BORDER_RADIUS_X: 25px 25px 200px 200px;
+$W_BORDER_RADIUS_Y: 25px 25px 60px 60px;
+
+$V_MARGIN_X: 40px;
+$V_X: $W_WIDTH - $V_MARGIN_X * 2;
+$V_BORDER: 9px 12px 4px 4px;
+$V_WIDTH: $V_X - nth($V_BORDER, 2) - nth($V_BORDER, 4);
+$V_Y: 108px;
+$V_HEIGHT: $V_Y - nth($V_BORDER, 1) - nth($V_BORDER, 3);
+$V_MARGIN_TOP: 90px;
+$V_MARGIN_BOTTOM: 36px;
+$V_TOP: nth($W_BORDER, 1) + $V_MARGIN_TOP;
+$V_LEFT: nth($W_BORDER, 4) + $V_MARGIN_X;
+$V_BORDER_RADIUS_X: 25px 25px 25px 25px;
+$V_BORDER_RADIUS_Y: 25px 25px 25px 25px;
+
+$W_HEIGHT: $V_MARGIN_TOP + $V_Y + $V_MARGIN_BOTTOM + $B_MARGIN_TOP + $B_Y * 4 + $B_BETWEEN_Y * 3 + $B_MARGIN_BOTTOM;
+$W_Y: $W_HEIGHT + nth($W_BORDER, 1) + nth($W_BORDER, 3);
+$W_TRANSLATE_Z: $B_TRANSLATE_Z - 3px;
+
+$B_TOP: $V_TOP + $V_Y + $B_MARGIN_TOP;
+$B_LEFT: nth($W_BORDER, 4) + $B_MARGIN_X;
+
+body {
+  display: flex;
+  justify-content: center;
+  background-color: rgba(224, 224, 224, 1);
+  height: 50px;
+  overflow-y: hidden;
+}
+.w_top {
+  position: relative;
+  perspective: 240px;
+  transform-style: preserve-3d;
+  transform: rotate3d(4, 3, -1, 30deg);
+  top: -188px;
+  width: $W_X;
+  height: $W_Y;
+}
+.wf1 {
+  border-style: solid;
+}
+.ww1 {
+  border-radius: $W_BORDER_RADIUS_X / $W_BORDER_RADIUS_Y;
+  transform: translateZ($W_TRANSLATE_Z),
+}
+.ww1f1 {
+  width: get_f1_width($W_WIDTH, $W_BORDER_RADIUS_X);
+  height: get_f1_height($W_HEIGHT, $W_BORDER_RADIUS_Y);
+  border-width: get_f1_border($W_BORDER, $W_BORDER_RADIUS_X, $W_BORDER_RADIUS_Y);
+  border-color: rgba(74, 76, 77, 1) rgba(87, 90, 92, 1) rgba(109, 112, 115, 1) rgba(132, 136, 140, 1);
+}
+.ww1f2 {
+  top: nth($W_BORDER, 1);
+  left: nth($W_BORDER, 4);
+  width: $W_WIDTH;
+  height: $W_HEIGHT;
+  background: radial-gradient(rgba(172, 172, 172, 1), rgba(196, 196, 196, 1));
+  background-size: 4px 3px;
+}
+.ww1f3 {
+  width: $W_X;
+  height: $W_Y;
+  box-shadow: (5px 6px 6px 5px rgba(0, 0, 0, 0.5), inset -2px -9px 11px 2px rgba(0, 0, 0, 0.4), -4px -5px 5px 4px rgba(255, 255, 255, 0.4), inset 15px 2px 15px 2px rgba(255, 255, 255, 0.2));
+}
+.ww1f4 {
+  top: 3px;
+  left: 10px;
+  width: $W_X - 13px;
+  height: $W_Y - 14px;
+  box-shadow: (-2px -1px 1px 1px rgba(200, 200, 239, 0.1), inset 1px 1px 1px 0px rgba(200, 200, 239, 0.2), -10px -5px 18px 10px rgba(200, 200, 239, 0.1), inset 5px 2px 6px 2px rgba(200, 200, 239, 0.1));
+}
+.ww1f5 {
+  top: nth($W_BORDER, 1);
+  left: nth($W_BORDER, 4);
+  width: $W_WIDTH;
+  height: $W_HEIGHT;
+  background: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.2) 100%);
+}
+.ww1f6 {
+  top: nth($W_BORDER, 1);
+  left: nth($W_BORDER, 4);
+  width: $W_WIDTH;
+  height: $W_HEIGHT;
+  background: radial-gradient(circle at 40% 27%, rgba(239, 239, 200, 0.25) 0, rgba(239, 239, 200, 0.1) 20%, rgba(239, 239, 200, 0) 100%);
+}
+
+$W2_BORDER: nth($W_BORDER, 1) nth($W_BORDER, 2) 0 nth($W_BORDER, 4);
+$W2_BORDER_RADIUS_Y: nth($W_BORDER_RADIUS_Y, 1) nth($W_BORDER_RADIUS_Y, 2) 0 0;
+$W2_HEIGHT: $V_MARGIN_TOP + $V_Y + $V_MARGIN_BOTTOM;
+.ww2 {
+  border-radius: $W_BORDER_RADIUS_X / $W2_BORDER_RADIUS_Y;
+  transform: translateZ($W_TRANSLATE_Z),
+}
+.ww2f1 {
+  width: get_f1_width($W_WIDTH, $W_BORDER_RADIUS_X);
+  height: get_f1_height($W2_HEIGHT, $W2_BORDER_RADIUS_Y);
+  border-width: get_f1_border($W2_BORDER, $W_BORDER_RADIUS_X, $W2_BORDER_RADIUS_Y);
+  border-color: rgba(36, 36, 35, 1) rgba(24, 24, 23, 1) rgba(42, 42, 41, 1) rgba(52, 52, 51, 1);
+}
+.ww2f2 {
+  top: nth($W_BORDER, 1);
+  left: nth($W_BORDER, 4);
+  width: $W_WIDTH;
+  height: $W2_HEIGHT - 1px;
+  background: rgba(36, 36, 35, 1);
+  background: radial-gradient(rgba(60, 60, 60, 1), rgba(24, 24, 24, 1));
+  background-size: 4px 3px;
+  border-bottom: 2px solid  rgba(132, 136, 140, 0.8);
+}
+
+$W3_PADDING_X: 24px;
+$W3_PADDING_Y: 16px;
+$W3_BORDER: 2px;
+.ww3 {
+  border-radius: 20px 20px 20px 20px / 20px 20px 20px 20px;
+  transform: translateZ($W_TRANSLATE_Z),
+}
+.ww3f2 {
+  top: $V_TOP - $W3_PADDING_Y;
+  left: $V_LEFT - $W3_PADDING_X;
+  width: $V_X + $W3_PADDING_X * 2 - $W3_BORDER * 2;
+  height: $V_Y + $W3_PADDING_Y * 2 - $W3_BORDER * 2;
+  background: radial-gradient(rgba(160, 160, 160, 1), rgba(184, 184, 184, 1));
+  background-size: 3px 2px;
+  border: $W3_BORDER solid  rgba(132, 136, 140, 0.8);
+}
+
+$W4_TOP: 20px;
+$W4_TILE_LENGTH: 36px;
+$W4_BORDER: 6px 6px 3px 3px;
+$W4_WIDTH: $W4_TILE_LENGTH * 4;
+$W4_HEIGHT: $W4_TILE_LENGTH;
+$W4_X: $W4_WIDTH + nth($W4_BORDER, 2) + nth($W4_BORDER, 4);
+$W4_Y: $W4_HEIGHT + nth($W4_BORDER, 1) + nth($W4_BORDER, 3);
+$W4_LEFT: nth($W_BORDER, 4) + ($W_WIDTH - $W4_WIDTH - nth($W4_BORDER, 2) - nth($W4_BORDER, 4)) / 2;
+$W4_BORDER_RADIUS_X: 6px 6px 6px 6px;
+$W4_BORDER_RADIUS_Y: 6px 6px 6px 6px;
+.ww4 {
+  border-radius: $W4_BORDER_RADIUS_X / $W4_BORDER_RADIUS_Y;
+  transform: translateZ($W_TRANSLATE_Z),
+}
+.ww4f1 {
+  top: $W4_TOP;
+  left: $W4_LEFT;
+  width: get_f1_width($W4_WIDTH, $W4_BORDER_RADIUS_X);
+  height: get_f1_height($W4_HEIGHT, $W4_BORDER_RADIUS_Y);
+  border-width: get_f1_border($W4_BORDER, $W4_BORDER_RADIUS_X, $W4_BORDER_RADIUS_Y);
+  border-color: rgba(45, 45, 44, 1) rgba(56, 56, 55, 1) rgba(50, 50, 49, 1) rgba(42, 42, 41, 1) ;
+}
+.ww4f2 {
+  top: $W4_TOP + nth($W4_BORDER, 1);
+  left: $W4_LEFT + nth($W4_BORDER, 4);
+  width: $W4_WIDTH;
+  height: $W4_HEIGHT;
+  background: linear-gradient(to right, 
+     rgba(60, 36, 35, 1) 24%, rgba(36, 60, 35, 1) 24% 26%, rgba(60, 36, 35, 1) 26% 49%, rgba(36, 60, 35, 1) 49% 51%, rgba(60, 36, 35, 1) 51% 74%, rgba(36, 60, 35, 1) 74% 76%, rgba(60, 36, 35, 1) 76% 100% );
+}
+.ww4f3 {
+  top: $W4_TOP + nth($W4_BORDER, 1);
+  left: $W4_LEFT + nth($W4_BORDER, 4);
+  width: $W4_WIDTH;
+  height: $W4_HEIGHT;
+  box-shadow: (-3px -6px 6px 3px rgba(0, 0, 0, 0.1), inset 4px 3px 4px 3px rgba(0, 0, 0, 0.2), 6px 3px 6px 3px rgba(255, 255, 255, 0.05), inset -2px -2px 12px 2px rgba(255, 255, 255, 0.1));
+}
+
+.wv1 {
+  border-radius: $V_BORDER_RADIUS_X / $V_BORDER_RADIUS_Y;
+  transform: translateZ($W_TRANSLATE_Z);
+}
+@font-face {
+  font-family: "wg1";
+  src: url("https://cdn.jsdelivr.net/npm/dseg@0.45.1/fonts/DSEG7-Classic-MINI/DSEG7ClassicMini-BoldItalic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "wg2";
+  src: url(https://cdn.jsdelivr.net/gh/j5c8k6m8/DSEG@v0.0.2/fonts/DSEG7ClassicMini-BoldItalic-hidden-hyphen-all-eight.woff2) format("woff2");
+}
+@font-face {
+  font-family: "wg3";
+  src: url(https://cdn.jsdelivr.net/gh/j5c8k6m8/DSEG@v0.0.2/fonts/DSEG7ClassicMini-BoldItalic-hidden-hyphen.woff2) format("woff2");
+}
+@font-face {
+  font-family: "wg4";
+  src: url(https://cdn.jsdelivr.net/gh/j5c8k6m8/DSEG@v0.0.2/fonts/DSEG7ClassicMini-BoldItalic-only-hyphen.woff2) format("woff2");
+}
+$KV_PADDING_TOP: 24px;
+$KV_PADDING_RIGHT: 0px;
+.wkv {
+  top: $V_TOP + 20px;
+  left: $V_LEFT - 102px;
+  text-align: right;
+  font-size: 72px;
+  transform: translateZ($W_TRANSLATE_Z) scale(0.5, 1);
+  width: 540px;
+}
+.ws1 {
+  color: rgba(18, 18, 18, 1);
+}
+.ws2 {
+  color: rgba(90, 95, 83, 1);
+}
+.wg1 {
+  font-family: "wg1";
+}
+.wg2 {
+  font-family: "wg2";
+}
+.wg3 {
+  font-family: "wg3";
+}
+.wg4 {
+  font-family: "wg4";
+}
+.wkq1 {
+  top: $V_TOP + 56px;
+  left: $V_LEFT + 12px;
+  font-size: 36px;
+  transform: translateZ($W_TRANSLATE_Z) scale(0.56, 1);
+}
+.wkq2 {
+  top: $V_TOP + 56px;
+  left: $V_LEFT + 42px;
+  font-size: 36px;
+  transform: translateZ($W_TRANSLATE_Z) scale(0.56, 1);
+}
+.wke {
+  top: $V_TOP + 8px;
+  left: $V_LEFT + 6px;
+  font-size: 36px;
+  transform: translateZ($W_TRANSLATE_Z) scale(0.56, 1);
+}
+.wkp {
+  top: $V_TOP + 50px;
+  left: $V_LEFT + $V_WIDTH - 23px;
+  font-size: 36px;
+  transform: translateZ($W_TRANSLATE_Z) scale(0.56, 1);
+}
+.wkm {
+  top: $V_TOP + 32px;
+  left: $V_LEFT + $V_WIDTH - 26px;
+  font-size: 36px;
+  transform: translateZ($W_TRANSLATE_Z) scale(0.56, 1);
+}
+.wv1f1 {
+  top: $V_TOP;
+  left: $V_LEFT;
+  width: get_f1_width($V_WIDTH, $V_BORDER_RADIUS_X);
+  height: get_f1_height($V_HEIGHT, $V_BORDER_RADIUS_Y);
+  border-width: get_f1_border($V_BORDER, $V_BORDER_RADIUS_X, $V_BORDER_RADIUS_Y);
+  border-color: rgba(44, 44, 43, 1) rgba(72, 72, 72, 1) rgba(62, 62, 62, 1) rgba(56, 56, 56, 1);
+}
+.wv1f2 {
+  top: $V_TOP + nth($V_BORDER, 1);
+  left: $V_LEFT + nth($V_BORDER, 4);
+  width: $V_WIDTH;
+  height: $V_HEIGHT;
+  background: linear-gradient(20deg, rgba(92, 97, 85, 1) 0%, rgba(112, 115, 98, 1) 25%, rgba(92, 97, 85, 1) 50%, rgba(112, 115, 98, 1) 75%, rgba(92, 97, 85, 1) 100%);
+  background-size: 12px 6px;
+}
+.wv1f3 {
+  top: $V_TOP + nth($V_BORDER, 1);
+  left: $V_LEFT + nth($V_BORDER, 4);
+  width: $V_WIDTH;
+  height: $V_HEIGHT;
+  box-shadow: (-4px -9px 6px 4px rgba(0, 0, 0, 0.2), inset 6px 4px 4px 4px rgba(0, 0, 0, 0.3), 12px 4px 6px 4px rgba(255, 255, 255, 0.1), inset -2px -2px 8px 2px rgba(255, 255, 255, 0.12));
+}
+.wv1f4 {
+  top: $V_TOP + 6px;
+  left: $V_LEFT + 2px;
+  width: $V_X - 9px;
+  height: $V_Y - 9px;
+  box-shadow: (2px 1px 1px 1px rgba(200, 200, 239, 0.08), inset -1px 0px 1px 0px rgba(200, 200, 239, 0.16), 10px 5px 18px 10px rgba(200, 200, 239, 0.08), inset -5px -2px 6px 2px rgba(200, 200, 239, 0.08));
+}
+.wv1f5 {
+  top: $V_TOP + nth($V_BORDER, 1);
+  left: $V_LEFT + nth($V_BORDER, 4);
+  width: $V_WIDTH;
+  height: $V_HEIGHT;
+  background: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.05) 100%);
+}
+.wv1f6 {
+  top: $V_TOP + nth($V_BORDER, 1);
+  left: $V_LEFT + nth($V_BORDER, 4);
+  width: $V_WIDTH;
+  height: $V_HEIGHT;
+  background: radial-gradient(circle at 30% 14%, rgba(239, 239, 200, 0.2) 0, rgba(239, 239, 200, 0.1) 40%, rgba(239, 239, 200, 0) 100%);
+}
+
+.w_light1 {
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 0;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
+}
+.wn {
+  transform: translateZ($B_TRANSLATE_Z),
+}
+.wb {
+  border-radius: $B_BORDER_RADIUS_X / $B_BORDER_RADIUS_Y;
+}
+.wa {
+  border-radius: 12px 12px 16px 16px / 12px 12px 100px 100px;
+}
+.wnu {
+  transform: translateZ($W_TRANSLATE_Z);
+  width: $B_X + 3px;
+  background: radial-gradient(rgba(64, 64, 64, 1), rgba(0, 0, 0, 1));
+}
+.wbu {
+  border-radius: $B_BORDER_RADIUS_X / $B_BORDER_RADIUS_Y;
+  height: $B_Y + 1px;
+}
+.wau {
+  border-radius: 12px 12px 16px 16px / 12px 12px 100px 100px;
+  height: $B_Y * 2 + $B_BETWEEN_Y + 2px;
+}
+.wnf1 {
+  width: get_f1_width($B_WIDTH, $B_BORDER_RADIUS_X);
+  border-width: get_f1_border($B_BORDER, $B_BORDER_RADIUS_X, $B_BORDER_RADIUS_Y);
+}
+.wbf1 {
+  height: get_f1_height($B_HEIGHT, $B_BORDER_RADIUS_Y);
+}
+.waf1 {
+  height: get_f1_height($B_HEIGHT + $B_Y + $B_BETWEEN_Y, $B_BORDER_RADIUS_Y);
+}
+.wxf1 {
+  border-color: rgba(72, 72, 71, 1) rgba(52, 52, 52, 1) rgba(66, 66, 65, 1) rgba(80, 80, 79, 1);
+}
+.wcf1 {
+  border-color: rgba(134, 38, 22, 1) rgba(128, 36, 20, 1) rgba(121, 31, 24, 1) rgba(142, 44, 26, 1);
+}
+.wof1 {
+  border-color: rgba(44, 44, 4, 1) rgba(26, 26, 26, 1) rgba(32, 32, 32, 1) rgba(50, 50, 51, 1);
+}
+.wnf2 {
+  width: $B_WIDTH;
+  font-size: 40px;
+  color: rgba(200, 200, 200, 1);
+  text-align: center;
+}
+.wbf2 {
+  height: $B_HEIGHT;
+}
+.waf2 {
+  $PADDING-TOP: 36px; 
+  height: $B_HEIGHT + $B_Y + $B_BETWEEN_Y - $PADDING-TOP;
+  padding-top: $PADDING-TOP;
+}
+.wxf2 {
+  background: rgba(97, 100, 104, 1);
+  background: radial-gradient(rgba(79, 82, 86, 1), rgba(97, 100, 104, 1));
+  background-size: 3px 2px;
+}
+.wcf2 {
+  background: rgba(153, 50, 32, 1);
+  background: radial-gradient(rgba(139, 26, 8, 1), rgba(159, 56, 48, 1));
+  background-size: 3px 2px;
+}
+.wof2 {
+  background: rgba(54, 54, 56, 1);
+  background: radial-gradient(rgba(22, 22, 24, 1), rgba(66, 66,68, 1));
+  background-size: 3px 2px;
+}
+.wnf3 {
+  width: $B_X;
+  box-shadow: (3px 4px 4px 3px rgba(0, 0, 0, 0.4), inset -2px -5px 6px 3px rgba(0, 0, 0, 0.3), -4px -5px 5px 4px rgba(255, 255, 255, 0.15), inset 4px 2px 9px 4px rgba(255, 255, 255, 0.1));
+}
+.wbf3 {
+  height: $B_Y;
+}
+.waf3 {
+  height: $B_Y * 2 + $B_BETWEEN_Y;
+}
+.wnf4 {
+  width: $B_X - 5px;
+  box-shadow: (-1px -1px 1px 1px rgba(216, 216, 255, 0.1), inset 1px 1px 1px 0px rgba(216, 216, 255, 0.2), -6px -4px 8px 4px rgba(216, 216, 255, 0.1), inset 2px 1px 3px 1px rgba(216, 216, 255, 0.1));
+}
+.wbf4 {
+  height: $B_Y - 6px;
+}
+.waf4 {
+  height: $B_Y * 2 + $B_BETWEEN_Y - 6px;
+}
+.wnf5 {
+  width: $B_WIDTH;
+  background: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.25) 100%);
+}
+.wbf5 {
+  height: $B_HEIGHT;
+}
+.waf5 {
+  height: $B_HEIGHT + $B_Y + $B_BETWEEN_Y;
+}
+.wnf6 {
+  width: $B_WIDTH;
+}
+.wbf6 {
+  height: $B_HEIGHT;
+  background: radial-gradient(circle at 35% 27%, rgba(239, 239, 200, 0.15) 0, rgba(239, 239, 200, 0.1) 20%, rgba(239, 239, 200, 0) 100%);
+}
+.waf6 {
+  height: $B_HEIGHT + $B_Y + $B_BETWEEN_Y;
+  background: radial-gradient(circle at 35% 18%, rgba(239, 239, 200, 0.15) 0, rgba(239, 239, 200, 0.1) 20%, rgba(239, 239, 200, 0) 100%);
+}
+
+$BU_MARGIN_TOP: 1px;
+$BU_MARGIN_LEFT: -2px;
+$B_F4_MARGIN_TOP: 2px;
+$B_F4_MARGIN_LEFT: 4px;
+@for $i from 1 through 4 {
+  .wi#{$i}f1 {
+    top: $B_TOP + ($B_Y + $B_BETWEEN_Y) * ($i - 1);
+  }
+  .wi#{$i}f2 {
+    top: $B_TOP + ($B_Y + $B_BETWEEN_Y) * ($i - 1) + nth($B_BORDER, 1);
+  }
+  .wi#{$i}f4 {
+    top: $B_TOP + ($B_Y + $B_BETWEEN_Y) * ($i - 1) + $B_F4_MARGIN_TOP;
+  }
+  .wi#{$i}u {
+    top: $B_TOP + ($B_Y + $B_BETWEEN_Y) * ($i - 1) + $BU_MARGIN_TOP;
+  }
+}
+
+@for $j from 1 through 4 {
+  .wj#{$j}f1 {
+    left: $B_LEFT + ($B_X + $B_BETWEEN_X) * ($j - 1);
+  }
+  .wj#{$j}f2 {
+    left: $B_LEFT + ($B_X + $B_BETWEEN_X) * ($j - 1) + nth($B_BORDER, 4);
+  }
+  .wj#{$j}f4 {
+    left: $B_LEFT + ($B_X + $B_BETWEEN_X) * ($j - 1) + $B_F4_MARGIN_LEFT;
+  }
+  .wj#{$j}u {
+    left: $B_LEFT + ($B_X + $B_BETWEEN_X) * ($j - 1) + $BU_MARGIN_LEFT;
+  }
+}
+.wlb {
+  width: $B_X;
+  height: $B_Y;
+}
+.wla {
+  width: $B_X;
+  height: $B_Y * 2 + $B_BETWEEN_Y;
+}
+
+// animation
+$ANIMATION_BORDER: 3px 3px 3px 3px;
+@keyframes wxf1 {
+  50% {
+    border-color: rgba(52, 52, 52, 1);
+    border-width: get_f1_border($ANIMATION_BORDER, $B_BORDER_RADIUS_X, $B_BORDER_RADIUS_Y);
+    transform: translateZ($W_TRANSLATE_Z);
+  }
+}
+@keyframes wcf1 {
+  50% {
+    border-color: rgba(52, 36, 20, 1);
+    border-width: get_f1_border($ANIMATION_BORDER, $B_BORDER_RADIUS_X, $B_BORDER_RADIUS_Y);
+    transform: translateZ($W_TRANSLATE_Z);
+  }
+}
+@keyframes wof1 {
+  50% {
+    border-color: rgba(26, 26, 26, 1);
+    border-width: get_f1_border($ANIMATION_BORDER, $B_BORDER_RADIUS_X, $B_BORDER_RADIUS_Y);
+    transform: translateZ($W_TRANSLATE_Z);
+  }
+}
+@keyframes wf2 {
+  50% {
+    transform: translateX(-2px) translateY(2px) translateZ($W_TRANSLATE_Z);
+  }
+}
+@keyframes wf3 {
+  50% {
+    box-shadow: none;
+  }
+}
+@keyframes wf4 {
+  50% {
+    box-shadow: none;
+  }
+}
+@keyframes wf5 {
+  50% {
+    transform: translateX(-2px) translateY(2px) translateZ($W_TRANSLATE_Z);
+  }
+}
+@keyframes wf6 {
+  50% {
+    transform: translateX(-2px) translateY(3px) translateZ($W_TRANSLATE_Z);
+  }
+}
+$ANIMATION_DURATION: 0.4s;
+$KEYS: x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 p m e r c;
+@each $key in $KEYS {
+  .#{$key}:focus ~ .wx#{$key}f1 {
+    animation: wxf1 $ANIMATION_DURATION ease-in-out none;
+  }
+  .#{$key}:focus ~ .wc#{$key}f1 {
+    animation: wcf1 $ANIMATION_DURATION ease-in-out none;
+  }
+  .#{$key}:focus ~ .wo#{$key}f1 {
+    animation: wof1 $ANIMATION_DURATION ease-in-out none;
+  }
+  // delayを掛けないと、f1が上に出てしまう場合があるため
+  .#{$key}:focus ~ .w#{$key}f2 {
+    animation: wf2 0.3s ease-in-out none;
+    animation-delay: 0.05s;
+  }
+  .#{$key}:focus ~ .w#{$key}f3 {
+    animation: wf3 $ANIMATION_DURATION ease-in-out none;
+  }
+  .#{$key}:focus ~ .w#{$key}f4 {
+    animation: wf4 $ANIMATION_DURATION ease-in-out none;
+  }
+  .#{$key}:focus ~ .w#{$key}f5 {
+    animation: wf5 $ANIMATION_DURATION ease-in-out none;
+  }
+  .#{$key}:focus ~ .w#{$key}f6 {
+    animation: wf6 $ANIMATION_DURATION ease-in-out none;
+  }
+}
+
+// 小ネタ1
+#n1d4x9:checked ~ #n1d3x7:checked ~ #n1d2x3:checked ~ #n1d1x1:checked ~ .lt0 {
+  display: block;
+}
+.t0:checked ~ .kt1 {
+  display: block;
+}
+.t0:checked ~ label {
+  display: none !important;
+}
+.t0:checked ~ .lc {
+  display: block !important;
+}
+
+// 小ネタ2
+.wt2 {
+    opacity: 1;
+}
+@keyframes t2 {
+  0% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+// 同じアニメーションと認識させないため、別で定義する
+@keyframes t3 {
+  0% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.wt2{
+  animation: t2 300s ease-in none;
+}
+input:focus ~ .wt2 {
+  animation: t3 300s ease-in none;
+}
+
+// 小ネタ3
+#n1d4m:checked ~ #n2d2e:checked ~ #n1d3x0:checked ~ #n1d2x0:checked ~ #n1d1x1:checked ~ #n2d1x1:checked ~ .wkv.ws1 {
+  color: white;
+}

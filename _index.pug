@@ -1,0 +1,108 @@
+- var DIGIT = 8;
+- var NUM = 5;
+- const buttons = [ {key: 'x0', value:'0', i:'4', j:'1', type1: 'x', type2: 'b' }, {key: 'x1', value:'1', i:'3', j:'1', type1: 'x', type2: 'b' }, {key: 'x2', value:'2', i:'3', j:'2', type1: 'x', type2: 'b' }, {key: 'x3', value:'3', i:'3', j:'3', type1: 'x', type2: 'b' }, {key: 'x4', value:'4', i:'2', j:'1', type1: 'x', type2: 'b' }, {key: 'x5', value:'5', i:'2', j:'2', type1: 'x', type2: 'b' }, {key: 'x6', value:'6', i:'2', j:'3', type1: 'x', type2: 'b' }, {key: 'x7', value:'7', i:'1', j:'1', type1: 'x', type2: 'b' }, {key: 'x8', value:'8', i:'1', j:'2', type1: 'x', type2: 'b' }, {key: 'x9', value:'9', i:'1', j:'3', type1: 'x', type2: 'b' }, {key: 'p', value:'+', i:'3', j:'4', type1: 'o', type2: 'a' }, {key: 'm', value:'－', i:'2', j:'4', type1: 'o', type2: 'b' }, {key: 'e', value:'=', i:'4', j:'3', type1: 'o', type2: 'b' }, {key: 'r', value:'・', i:'4', j:'2', type1: 'x', type2: 'b' }, {key: 'c', value:'C', i:'1', j:'4', type1: 'c', type2: 'b' }]
+form.w_top
+  input#t2(type="radio" checked)
+  input#q2.q.q2(name=`q2`, type="radio")
+  - for (var n = 1; n <= NUM; n++)
+    input(id=`n${n}d0r` name=`n${n}r`, type="radio", class=`n${n}h` checked)
+    - for (var d = 1; d <= DIGIT + 1; d++)
+      input(id=`n${n}d${d}r` name=`n${n}r`, type="radio", class=`r n${n}r n${n}d${d}r`)
+      input(id=`n${n}d${d}p` name=`n${n}o`, type="radio" class=`p n${n}p n${n}o${n === NUM ? ' q q1' : ''}`)
+      input(id=`n${n}d${d}m` name=`n${n}o`, type="radio" class=`m n${n}m n${n}o${n === NUM ? ' q q1' : ''}`)
+      input(id=`n${n}d${d}e` name=`n${n}o`, type="radio" class=`e n${n}e n${n}o`)
+  - for (var n = 1; n <= NUM; n++)
+    - for (var d = DIGIT; d >= 1; d--)
+      - for (var x = 0; x <= 9; x++)
+        input(id=`n${n}d${d}x${x}` name=`n${n}d${d}x`, type="radio", class=`x x${x} n${n}x n${n}d${d}x`)
+        span(class=`g gn${n} gn${n}d${d}`)
+          - for (var j = 0; j < x; j++)
+            span(class=`sn${n} sn${n}d${d}`)
+          - for (var z = 0; z <= DIGIT; z++)
+            - for (var j = 0; j < x; j++)
+              - if (j == 0 && x >= 5)
+                span(class=`sz${z}n${n} sz${z}n${n}d${d} sz${z}n${n}y sz${z}n${n}d${d}y`)
+              - else
+                span(class=`sz${z}n${n} sz${z}n${n}d${d}`)
+  input#c.c(type="reset")
+  input#t0.t0(type="radio")
+  .wf1.ww1.ww1f1
+  .wf2.ww1.ww1f2
+  .wf1.ww2.ww2f1
+  .wf2.ww2.ww2f2
+  .wf2.ww3.ww3f2
+  .wf3.ww1.ww1f3
+  .wf4.ww1.ww1f4
+  .wf5.ww1.ww1f5
+  .wf6.ww1.ww1f6
+  .wf1.ww4.ww4f1
+  .wf2.ww4.ww4f2
+  .wf3.ww4.ww4f3
+  .wf1.wv1.wv1f1
+  .wf2.wv1.wv1f2
+  - for (var z = 0; z <= DIGIT; z++)
+    div(class=`k kvz${z} wkv wg1 ws2`)='8.8.8.8.8.8.8.8.8.'
+    div(class=`vz${z} k kvz${z} wkv wg1 ws1`)
+    div(class=`k kvz${z} wkv wg1 ws2`)=`8${"8".repeat(z)}`
+    div(class=`vz${z} k kvz${z} wkv wg4 ws1`)=`!.${"!".repeat(z)}`
+    div(class=`k kvz${z} wkv wg1 ws1`)=`0.${"0".repeat(z)}`
+    div(class=`vz${z} k kvz${z} wkv wg2 ws2`)
+    div(class=`vz${z} k kvz${z} wkv wg3 ws1`)
+  - for (var n = 1; n <= NUM; n++)
+    - for (var z = 0; z <= DIGIT; z++)
+      div(class=`k kvn${n}z${z} wkv wg1 ws2`)='8.8.8.8.8.8.8.8.8.'
+      div(class=`k kvn${n}z${z} wkv wg1 ws1`)=`0.${"0".repeat(z)}`
+    div(class=`vn${n} k kvn${n} wkv wg2 ws2`)
+    div(class=`vn${n} k kvn${n} wkv wg1 ws1`)
+  div(class=`k kt1 wkv wg1 ws2`)='8.8.8.8.8.8.8.8.8.'
+  div(class=`k kt1 wkv wg1 ws1`)='A510'
+  div(class=`k kt1 wkv wg1 ws1`)='G!!!!'
+  div(class=`k kt1 wkv wg1 ws2`)='1!!!!'
+  div(class=`wt2 wkv wg1 ws2`)='8.8.8.8.8.8.8.8.8.'
+  .wkq1.ws2='E'
+  .k.kq1.wkq1.ws1='E'
+  .wt2.wkq1.ws2='E'
+  .wkq2.ws2='E'
+  .k.kq2.wkq2.ws1='E'
+  .wt2.wkq2.ws2='E'
+  .wke.ws2='＝'
+  .k.ke.wke.ws1='＝'
+  .wt2.wke.ws2='＝'
+  .wkp.ws2='+'
+  .k.kp.wkp.ws1='+'
+  .wt2.wkp.ws2='+'
+  .wkm.ws2='－'
+  .k.km.wkm.ws1='－'
+  .wt2.wkm.ws2='－'
+  .wf3.wv1.wv1f3
+  .wf4.wv1.wv1f4
+  .wf5.wv1.wv1f5
+  .wf6.wv1.wv1f6
+  each item in buttons
+    div(class=`wnu w${item.type1}u w${item.type2}u w${item.key} w${item.key}u wi${item.i}u wj${item.j}u`)
+    div(class=`wn wf1 wnf1 w${item.type2} w${item.type1}f1 w${item.type2}f1 w${item.key} w${item.key}f1 w${item.type1}${item.key}f1 w${item.type2}${item.key}f1 wi${item.i}f1 wj${item.j}f1`)
+    div(class=`wn wf2 wnf2 w${item.type2} w${item.type1}f2 w${item.type2}f2 w${item.key} w${item.type1}${item.key}f1 w${item.type2}${item.key}f1 w${item.key}f2 wi${item.i}f2 wj${item.j}f2`)=`${item.value}`
+    div(class=`wn wf3 wnf3 w${item.type2} w${item.type1}f3 w${item.type2}f3 w${item.key} w${item.type1}${item.key}f1 w${item.type2}${item.key}f1 w${item.key}f3 wi${item.i}f1 wj${item.j}f1`)
+    div(class=`wn wf4 wnf4 w${item.type2} w${item.type1}f4 w${item.type2}f4 w${item.key} w${item.type1}${item.key}f1 w${item.type2}${item.key}f1 w${item.key}f4 wi${item.i}f4 wj${item.j}f4`)
+    div(class=`wn wf5 wnf5 w${item.type2} w${item.type1}f5 w${item.type2}f5 w${item.key} w${item.type1}${item.key}f1 w${item.type2}${item.key}f1 w${item.key}f5 wi${item.i}f2 wj${item.j}f2`)
+    div(class=`wn w${item.type1}${item.key}f1 w${item.type2}${item.key}f1 wf6 wnf6 w${item.type2} w${item.type1}f6 w${item.type2}f6 w${item.key} w${item.key}f6 wi${item.i}f2 wj${item.j}f2`)
+  each item in buttons
+    - if (item.type1 !== 'c')
+      div(class=`nq l${item.key} wn w${item.type2} wl${item.type2} w${item.key} wi${item.i}f1 wj${item.j}f1`)
+  - for (var n = 1; n <= NUM; n++)
+    - for (var d = 1; d <= DIGIT + 1; d++)
+      each item in buttons
+        - if (item.type1 === 'c')
+          - if (n === 1 && d === 1)
+            label(for=`c` class=`l${item.key} wn w${item.type2} wl${item.type2} w${item.key} wi${item.i}f1 wj${item.j}f1`)
+            label(for=`t0` class=`lt0 wn w${item.type2} wl${item.type2} w${item.key} wi${item.i}f1 wj${item.j}f1`)
+        - else if (item.type1 === 'x')
+          label(for=`${item.type1 === 'x' && d === DIGIT + 1 ? 'q2' : `n${n}d${d}${item.key}`}` class=`ln${n}d${d}b l${item.key} wn w${item.type2} wl${item.type2} w${item.key} wi${item.i}f1 wj${item.j}f1`)
+          //- 最初の0の入力を禁止していたが、2桁目以降の挙動が不自然のため、入力できるように修正
+          //-label(for=`${item.type1 === 'x' && d === DIGIT + 1 ? 'q2' : `n${n}d${d}${item.key}`}` class=`ln${n}d${d}${d === 1 && item.key === 'x0' ? 'a' : 'b'} l${item.key} wn w${item.type2} wl${item.type2} w${item.key} wi${item.i}f1 wj${item.j}f1`)
+        - else if (item.type1 === 'r')
+          label(for=`n${n}d${d}${item.key}` class=`ln${n}${item.key} ln${n}d${d}b l${item.key} wn w${item.type2} wl${item.type2} w${item.key} wi${item.i}f1 wj${item.j}f1`)
+        - else
+          label(for=`n${n}d${d}${item.key}` class=`ln${n}d${d} ln${n}d${d}b l${item.key} wn w${item.type2} wl${item.type2} w${item.key} wi${item.i}f1 wj${item.j}f1`)
+.w_light
+
